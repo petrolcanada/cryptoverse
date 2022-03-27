@@ -10,6 +10,7 @@ import {
   News,
 } from "./components";
 import "./App.css";
+import "antd/dist/antd.css";
 
 const App = () => {
   return (
@@ -33,8 +34,21 @@ const App = () => {
             </Routes>
           </div>
         </Layout>
+        <div className="footer">
+          <Typography.Title
+            level={5}
+            style={{ color: "white", textAlign: "center" }}
+          >
+            Crytpoverse <br />
+            All rights reserved
+          </Typography.Title>
+          <Space>
+            <Link to="/">Home</Link>
+            <Link to="/exchanges">Exchanges</Link>
+            <Link to="/news">News</Link>
+          </Space>
+        </div>
       </div>
-      <div className="footer"></div>
     </div>
   );
 };
