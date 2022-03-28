@@ -20,7 +20,13 @@ export const cryptoApi = createApi({
         headers: cryptoApiHeaders,
       }),
     }),
+    getCryptoDetails: builder.query({
+      query: (coinId) => ({
+        url: `/coin/${coinId}`,
+        headers: cryptoApiHeaders,
+      }),
+    }),
   }),
 });
 
-export const { useGetCryptosQuery } = cryptoApi;
+export const { useGetCryptosQuery, useGetCryptoDetailsQuery } = cryptoApi;
