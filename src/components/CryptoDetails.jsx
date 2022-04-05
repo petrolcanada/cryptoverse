@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HTMLReactParser from "html-react-parser";
 import { useParams } from "react-router-dom";
 import millify from "millify";
-import { Col, Row, Typography, Select, Loader } from "antd";
+import { Col, Row, Typography, Select, Spin } from "antd";
 import {
   MoneyCollectOutlined,
   DollarCircleOutlined,
@@ -13,8 +13,14 @@ import {
   CheckOutlined,
   NumberOutlined,
   ThunderboltOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
-import { useGetCryptoDetailsQuery } from "../services/cryptoApi";
+import {
+  useGetCryptoDetailsQuery,
+  useGetCryptoHistoryQuery,
+} from "../services/cryptoApi";
+import LineChart from "./LineChart";
+import LineChartTest from "./LineChartTest";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -23,11 +29,28 @@ const CryptoDetails = () => {
   const { coinId } = useParams(); //take the coinId from the URL
   const [timePeriod, setTimePeriod] = useState("7d");
   const { data, isFetching } = useGetCryptoDetailsQuery(coinId);
+  const { data: coinHistory, isFetching: isFetchingHistory } =
+    useGetCryptoHistoryQuery({
+      coinId,
+      timePeriod,
+    });
   const cryptoDetails = data?.data?.coin;
 
-  console.log(data);
+  // useEffect(() => {
+  //   console.log("before isFetchingHistory", timePeriod, coinHistory);
+  // }, [timePeriod]);
 
-  if (isFetching) return "Loading... ";
+  if (isFetching)
+    return (
+      <Spin
+        size="large"
+        indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+      />
+    );
+  // if (isFetchingHistory) return <Spin size="large" indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}/>;
+  // if (isFetchingHistory) return "Loading ... ";
+
+  console.log("after isFetchingHistory", timePeriod, coinHistory);
 
   const time = ["3h", "24h", "7d", "30d", "1y", "3m", "3y", "5y"];
 
@@ -120,6 +143,21 @@ const CryptoDetails = () => {
           <Option key={date}></Option>
         ))}
       </Select>
+
+      {coinHistory ? (
+        <LineChart
+          coinHistory={coinHistory}
+          currentPrice={millify(cryptoDetails.price)}
+          coinName={cryptoDetails.name}
+        />
+      ) : (
+        <Spin
+          size="large"
+          indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+        />
+      )}
+
+      <LineChartTest />
       <Col className="stats-container">
         <Col className="coin-value-statistics">
           <Col className="coin-value-statistics-heading">
